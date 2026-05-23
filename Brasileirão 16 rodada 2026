@@ -1,0 +1,268 @@
+#!/usr/bin/env python3
+"""
+╔═══════════════════════════════════════════════════════════╗
+║   🏆  BRASILEIRÃO BETANO – SÉRIE A 2026  🏆               ║
+║   Tabela fixada após a 16ª Rodada · 17/05/2026            ║
+║   Fontes: CBF / Gazeta Esportiva / Diário do Peixe        ║
+║                                                           ║
+║   Dependências: NENHUMA (apenas Python 3.x padrão)        ║
+╚═══════════════════════════════════════════════════════════╝
+"""
+
+import os
+import sys
+
+# ── Detecta suporte a cores (Windows cmd antigo não suporta) ─────────────────
+def suporta_cores() -> bool:
+    return hasattr(sys.stdout, "isatty") and sys.stdout.isatty()
+
+USE_COLOR = suporta_cores()
+
+class C:
+    """Constantes ANSI de cor."""
+    RESET   = "\033[0m"     if USE_COLOR else ""
+    BOLD    = "\033[1m"     if USE_COLOR else ""
+    DIM     = "\033[2m"     if USE_COLOR else ""
+    GREEN   = "\033[32m"    if USE_COLOR else ""
+    BGREEN  = "\033[92m"    if USE_COLOR else ""  # verde brilhante
+    YELLOW  = "\033[33m"    if USE_COLOR else ""
+    BYELLOW = "\033[93m"    if USE_COLOR else ""
+    RED     = "\033[31m"    if USE_COLOR else ""
+    BRED    = "\033[91m"    if USE_COLOR else ""
+    CYAN    = "\033[36m"    if USE_COLOR else ""
+    WHITE   = "\033[97m"    if USE_COLOR else ""
+    BGREY   = "\033[100m"   if USE_COLOR else ""  # fundo cinza escuro
+    BGREY2  = "\033[48;5;235m" if USE_COLOR else ""
+
+
+# ═══════════════════════════════════════════════════════════
+#  DADOS FIXOS — Após a 16ª Rodada · 17/05/2026
+#  Fontes confirmadas: Gazeta Esportiva, Diário do Peixe, CBF
+#
+#  Colunas: (pos, clube, pj, v, e, d, gp, gc, sg, pts, forma)
+#  forma = lista com últimos 5 resultados: "V" / "E" / "D"
+# ═══════════════════════════════════════════════════════════
+RODADA    = 16
+DATA_BASE = "17/05/2026"
+
+TABELA = [
+    #  #   CLUBE                 PJ   V   E   D   GP   GC    SG  PTS   FORMA (5 mais recentes →)
+    (  1,  "Palmeiras",          16,  10,  2,  4,  32,  16,  +16, 32,  ["V","V","V","E","E"]),
+    (  2,  "Flamengo",           16,   9,  4,  3,  29,  15,  +14, 31,  ["V","V","E","E","V"]),
+    (  3,  "Fluminense",         16,   9,  3,  4,  25,  17,   +8, 30,  ["V","D","V","V","V"]),
+    (  4,  "São Paulo",          16,   7,  3,  6,  22,  20,   +2, 24,  ["E","D","V","D","V"]),
+    (  5,  "Botafogo",           16,   7,  2,  7,  25,  22,   +3, 23,  ["V","D","V","D","V"]),
+    (  6,  "Internacional",      16,   7,  2,  7,  26,  21,   +5, 23,  ["V","V","D","D","V"]),
+    (  7,  "Athletico-PR",       16,   6,  4,  6,  21,  19,   +2, 22,  ["E","V","E","D","V"]),
+    (  8,  "Atlético-MG",        16,   6,  4,  6,  22,  22,    0, 22,  ["V","D","E","V","E"]),
+    (  9,  "RB Bragantino",      16,   6,  3,  7,  22,  22,    0, 21,  ["V","D","V","E","D"]),
+    ( 10,  "Grêmio",             16,   6,  3,  7,  22,  23,   -1, 21,  ["E","D","V","V","E"]),
+    ( 11,  "Cruzeiro",           16,   6,  3,  7,  19,  21,   -2, 21,  ["E","V","D","E","D"]),
+    ( 12,  "Bahia",              16,   6,  2,  8,  21,  25,   -4, 20,  ["E","D","V","D","V"]),
+    ( 13,  "Coritiba",           16,   5,  5,  6,  21,  22,   -1, 20,  ["V","E","D","V","V"]),
+    ( 14,  "Vasco da Gama",      16,   5,  4,  7,  20,  26,   -6, 19,  ["D","E","D","V","D"]),
+    ( 15,  "Vitória",            16,   5,  4,  7,  21,  29,   -8, 19,  ["D","D","V","E","D"]),
+    ( 16,  "Santos",             16,   5,  3,  8,  21,  28,   -7, 18,  ["D","D","V","D","D"]),  # ← 1º fora Z4 (21 gols > Corinthians)
+    ( 17,  "Corinthians",        16,   4,  6,  6,  14,  21,   -7, 18,  ["D","E","E","E","D"]),  # ← Z4
+    ( 18,  "Remo",               16,   4,  3,  9,  18,  31,  -13, 15,  ["V","D","D","D","D"]),
+    ( 19,  "Mirassol",           16,   3,  4,  9,  16,  30,  -14, 13,  ["D","E","D","E","D"]),
+    ( 20,  "Chapecoense",        16,   2,  3, 11,  15,  34,  -19,  9,  ["D","D","D","V","D"]),
+]
+
+# Resultados confirmados da 16ª Rodada
+RESULTADOS_R16 = [
+    ("Atlético-MG",   3, "Mirassol",      1),
+    ("Internacional", 4, "Vasco da Gama", 1),
+    ("Fluminense",    2, "São Paulo",      1),
+    ("Palmeiras",     1, "Cruzeiro",       1),
+    ("Santos",        0, "Coritiba",       3),
+    ("Botafogo",      3, "Corinthians",    1),
+    ("Bahia",         1, "Grêmio",         1),
+    ("RB Bragantino", 2, "Vitória",        0),
+    ("Chapecoense",   2, "Remo",           3),
+    ("Athletico-PR",  1, "Flamengo",       1),
+]
+
+
+# ── Helpers de formatação ─────────────────────────────────────────────────────
+def cor_zona(pos: int) -> str:
+    if pos <= 5:   return C.BOLD + C.BGREEN
+    if pos <= 11:  return C.BOLD + C.CYAN
+    if pos >= 17:  return C.BOLD + C.BRED
+    return C.WHITE
+
+def badge_zona(pos: int) -> str:
+    if pos <= 5:   return C.BOLD + C.BGREEN + "▲" + C.RESET
+    if pos <= 11:  return C.BOLD + C.CYAN   + "◆" + C.RESET
+    if pos >= 17:  return C.BOLD + C.BRED   + "▼" + C.RESET
+    return " "
+
+def str_sg(sg: int) -> str:
+    if sg > 0: return C.BGREEN + f"+{sg:>3}" + C.RESET
+    if sg < 0: return C.BRED   + f"{sg:>3}"  + C.RESET
+    return C.DIM   + f"  0" + C.RESET
+
+def str_forma(forma: list) -> str:
+    partes = []
+    for r in forma:
+        if r == "V": partes.append(C.BOLD + C.GREEN  + "V" + C.RESET)
+        elif r == "E": partes.append(C.BOLD + C.YELLOW + "E" + C.RESET)
+        else:          partes.append(C.BOLD + C.RED    + "D" + C.RESET)
+    return " ".join(partes)
+
+def separador(char="─", largura=120) -> str:
+    return C.DIM + char * largura + C.RESET
+
+def colunar(texto, largura, alinhar="left") -> str:
+    """Retorna texto truncado/preenchido sem contar códigos ANSI."""
+    limpo = ""
+    dentro_esc = False
+    for ch in texto:
+        if ch == "\033":
+            dentro_esc = True
+        if not dentro_esc:
+            limpo += ch
+        if dentro_esc and ch == "m":
+            dentro_esc = False
+    tamanho = len(limpo)
+    pad = max(0, largura - tamanho)
+    if alinhar == "right":
+        return " " * pad + texto
+    elif alinhar == "center":
+        lpad = pad // 2
+        rpad = pad - lpad
+        return " " * lpad + texto + " " * rpad
+    return texto + " " * pad
+
+
+# ── Exibição principal ────────────────────────────────────────────────────────
+def cabecalho():
+    print()
+    print(C.BOLD + C.BYELLOW + "  🏆  BRASILEIRÃO BETANO – SÉRIE A 2026  🏆  " + C.RESET)
+    print(C.DIM  + f"  Dados após a {RODADA}ª Rodada  ·  {DATA_BASE}  ·  Fonte: CBF / Gazeta Esportiva" + C.RESET)
+    print()
+
+
+def cabecalho_tabela():
+    print(separador("═", 104))
+    fmt = (
+        f"  {'#':>2}  {'':1}  "
+        f"{'CLUBE':<20}  "
+        f"{'PJ':>3}  "
+        f"{'V':>3}  "
+        f"{'E':>3}  "
+        f"{'D':>3}  "
+        f"{'GP':>4}  "
+        f"{'GC':>4}  "
+        f"{'SG':>4}  "
+        f"{'PTS':>4}  "
+        f"{'%':>6}  "
+        f"{'FORMA (últimos 5)':<20}"
+    )
+    print(C.BOLD + C.BYELLOW + fmt + C.RESET)
+    print(separador("─", 104))
+
+
+def linha_tabela(row):
+    pos, clube, pj, v, e, d, gp, gc, sg, pts, forma = row
+    cor   = cor_zona(pos)
+    badge = badge_zona(pos)
+    aprov = f"{pts/(pj*3)*100:.1f}%"
+
+    print(
+        f"  {cor}{pos:>2}{C.RESET}  "
+        f"{badge} "
+        f" {cor}{clube:<20}{C.RESET}  "
+        f"{pj:>3}  "
+        f"{C.BOLD}{C.GREEN}{v:>3}{C.RESET}  "
+        f"{C.BOLD}{C.YELLOW}{e:>3}{C.RESET}  "
+        f"{C.BOLD}{C.RED}{d:>3}{C.RESET}  "
+        f"{gp:>4}  "
+        f"{gc:>4}  "
+        f"{colunar(str_sg(sg), 5, 'right')}  "
+        f"{cor}{C.BOLD}{pts:>4}{C.RESET}  "
+        f"{C.DIM}{aprov:>6}{C.RESET}  "
+        f"{str_forma(forma)}"
+    )
+
+
+def divisoria_zona(label):
+    print(
+        C.DIM
+        + "  · · ·  "
+        + f" {label} "
+        + "· · ·"
+        + C.RESET
+    )
+
+
+def exibir_tabela():
+    cabecalho()
+    cabecalho_tabela()
+    for i, row in enumerate(TABELA):
+        pos = row[0]
+        linha_tabela(row)
+        if pos == 5:
+            divisoria_zona("Sul-Americana ↓")
+        elif pos == 11:
+            divisoria_zona("Meio de tabela ↓")
+        elif pos == 16:
+            divisoria_zona("Zona de Rebaixamento ↓")
+    print(separador("═", 104))
+    print()
+    print(
+        f"  {C.BOLD}{C.BGREEN}▲ Libertadores{C.RESET} (1º–5º)   "
+        f"{C.BOLD}{C.CYAN}◆ Sul-Americana{C.RESET} (6º–11º)   "
+        f"{C.BOLD}{C.BRED}▼ Rebaixamento{C.RESET} (17º–20º)"
+    )
+    print()
+
+
+def exibir_resultados_r16():
+    print(C.BOLD + C.BYELLOW + f"  Resultados da {RODADA}ª Rodada — {DATA_BASE}" + C.RESET)
+    print(separador("─", 50))
+    for m, gm, vis, gv in RESULTADOS_R16:
+        if gm > gv:
+            placar = C.BOLD + C.BGREEN + f"  {gm} – {gv}" + C.RESET
+        elif gm < gv:
+            placar = C.BOLD + C.BRED   + f"  {gm} – {gv}" + C.RESET
+        else:
+            placar = C.BOLD + C.YELLOW + f"  {gm} – {gv}" + C.RESET
+        print(f"  {m:>20}{placar}  {vis}")
+    print(separador("─", 50))
+    print()
+
+
+def exibir_destaques():
+    lider   = TABELA[0]
+    ataque  = max(TABELA, key=lambda r: r[6])
+    defesa  = min(TABELA, key=lambda r: r[7])
+    lantern = TABELA[-1]
+    artilh  = max(TABELA, key=lambda r: r[4])  # mais vitórias
+
+    print(C.BOLD + C.BYELLOW + "  Destaques" + C.RESET)
+    print(separador("─", 50))
+    print(f"  🥇  Líder:            {C.BOLD}{C.BYELLOW}{lider[1]:<18}{C.RESET}  {lider[9]} pts")
+    print(f"  ⚽  Melhor ataque:    {C.BOLD}{C.GREEN}{ataque[1]:<18}{C.RESET}  {ataque[6]} gols marcados")
+    print(f"  🧤  Melhor defesa:    {C.BOLD}{C.CYAN}{defesa[1]:<18}{C.RESET}  {defesa[7]} gols sofridos")
+    print(f"  📉  Lanterna:         {C.BOLD}{C.BRED}{lantern[1]:<18}{C.RESET}  {lantern[9]} pts")
+    print(separador("─", 50))
+    print()
+
+
+def rodape():
+    print(C.DIM + f"  Dados fixados após a {RODADA}ª rodada ({DATA_BASE}).")
+    print( "  Fontes: CBF · Gazeta Esportiva · Diário do Peixe")
+    print( "  Para atualizar a tabela, edite as variáveis TABELA e RESULTADOS no script.")
+    print(C.RESET)
+
+
+def main():
+    exibir_tabela()
+    exibir_resultados_r16()
+    exibir_destaques()
+    rodape()
+
+
+if __name__ == "__main__":
+    main()
