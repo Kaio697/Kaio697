@@ -4,7 +4,7 @@
 - 💞️ I’m looking to collaborate on companies that accept juniors or internships
 - 📫 (16) 992815033, kaio_eduardo1006@hotmail.com
 - 😄 Pronouns: none
-- ⚡ Fun fact: java script, SQL, backend, frontend
+- ⚡ Fun fact: java script, SQL, Python, Node.js, Linux
 
 <!---
 Kaio697/Kaio697 is a ✨ special ✨ repository because its `README.md` (this file) appears on your GitHub profile.
