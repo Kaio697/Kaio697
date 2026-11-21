@@ -1,12 +1,23 @@
-- 👋 Hi, I’m @Kaio697
-- 👀 I’m interested in delve deeper into the dev area, it has always been my interest in IT!!!
-- 🌱 I’m currently learning Systems Analysis and Development
-- 💞️ I’m looking to collaborate on companies that accept juniors or internships
-- 📫 (16) 992815033, kaio_eduardo1006@hotmail.com
-- 😄 Pronouns: none
-- ⚡ Fun fact: java script, SQL, Python, Node.js, Linux
+# Olá, eu sou o Kaio Eduardo 👋
 
-<!---
-Kaio697/Kaio697 is a ✨ special ✨ repository because its `README.md` (this file) appears on your GitHub profile.
-You can click the Preview link to take a look at your changes.
---->
+Estudante apaixonado por tecnologia, em formação na área de **Análise e Desenvolvimento de Sistemas**. Desenvolvimento sempre foi o campo da TI que mais me despertou interesse, e hoje estou transformando essa curiosidade em prática.
+
+## 🎯 Objetivo
+Estou em busca da minha **primeira oportunidade de estágio** em desenvolvimento. Procuro empresas que aceitem estudantes do ensino fundamental ou médio e que valorizem vontade de aprender.
+
+## 🛠️ Tecnologias que estou estudando
+
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
+![SQL](https://img.shields.io/badge/SQL-4479A1?style=for-the-badge&logo=postgresql&logoColor=white)
+![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)
+
+## 🌱 Foco atual
+- Lógica de programação e boas práticas
+- Banco de dados e SQL
+- Construção dos primeiros projetos para o portfólio
+
+## 📫 Vamos conversar?
+- 📧 kaio_eduardo1006@hotmail.com
+- 📱 (16) 992815033
